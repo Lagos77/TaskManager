@@ -1,4 +1,4 @@
-package com.example.taskmanager
+package com.taskmanager.taskmanager
 
 import org.junit.Test
 
