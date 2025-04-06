@@ -1,5 +1,6 @@
 package com.taskmanager.presentation.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,6 +31,7 @@ import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.taskmanager.R
 import com.taskmanager.presentation.components.TopBar
+import com.taskmanager.presentation.components.TopBarTitle
 import com.taskmanager.presentation.destinations.SettingsScreenDestination
 import com.taskmanager.presentation.destinations.TasksScreenDestination
 import com.taskmanager.ui.Spacing
@@ -42,7 +44,15 @@ fun HomeScreen(
     navigator: DestinationsNavigator
 ) {
     HomeScreenContent(
-        navigateToTaskScreen = { navigator.navigate(TasksScreenDestination) },
+        navigateToCreateTaskScreen = { navigator.navigate(TasksScreenDestination(currentScreen = TopBarTitle.CREATE)) },
+        navigateToEditTaskScreen = {
+            navigator.navigate(
+                TasksScreenDestination(
+                    currentScreen = TopBarTitle.EDIT,
+                    taskId = it
+                )
+            )
+        },
         navigateToSettingsScreen = { navigator.navigate(SettingsScreenDestination) },
     )
 }
@@ -50,11 +60,12 @@ fun HomeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeScreenContent(
-    navigateToTaskScreen: () -> Unit,
+    navigateToCreateTaskScreen: () -> Unit,
+    navigateToEditTaskScreen: (Int) -> Unit,
     navigateToSettingsScreen: () -> Unit,
 ) {
     Scaffold(
-        topBar = { TopBar() },
+        topBar = { TopBar(currentScreen = TopBarTitle.HOME) },
         bottomBar = {
             NavigationBar(
                 containerColor = MaterialTheme.colorScheme.onSurface
@@ -77,9 +88,9 @@ private fun HomeScreenContent(
                             contentDescription = stringResource(R.string.cd_create_task)
                         )
                     },
-                    label = { Text(stringResource(R.string.home_create_task)) },
+                    label = { Text(stringResource(R.string.home_bottom_bar_create_task)) },
                     selected = false,
-                    onClick = { navigateToTaskScreen() }
+                    onClick = { navigateToCreateTaskScreen() }
                 )
                 NavigationBarItem(
                     icon = {
@@ -88,7 +99,7 @@ private fun HomeScreenContent(
                             contentDescription = stringResource(R.string.cd_toggle_theme)
                         )
                     },
-                    label = { Text(stringResource(R.string.home_theme)) },
+                    label = { Text(stringResource(R.string.home_bottom_bar_theme)) },
                     selected = false,
                     onClick = {} //TODO
                 )
@@ -107,7 +118,10 @@ private fun HomeScreenContent(
             verticalArrangement = Arrangement.spacedBy(Spacing.regular),
         ) {
             items(10) { index ->
-                TaskCard(title = "Task $index", description = "This a description for $index")
+                TaskCard(
+                    title = "Task $index", description = "This a description for $index",
+                    onClick = { navigateToEditTaskScreen(index) },
+                )
             }
         }
     }
@@ -117,12 +131,14 @@ private fun HomeScreenContent(
 private fun TaskCard(
     title: String,
     description: String,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         elevation = CardDefaults.cardElevation(defaultElevation = Spacing.pico),
-        shape = MaterialTheme.shapes.small,
         colors = ThemeDefaults.defaultCardColors(),
     ) {
         Column(modifier = Modifier.padding(Spacing.mediumPlus)) {
@@ -144,7 +160,8 @@ private fun TaskCard(
 @Composable
 private fun HomeScreenPreview() {
     HomeScreenContent(
-        navigateToTaskScreen = {},
+        navigateToCreateTaskScreen = {},
+        navigateToEditTaskScreen = {},
         navigateToSettingsScreen = {},
     )
 }
