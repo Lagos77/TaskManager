@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cd_create_task">Create</string>
+    <string name="cd_settings">Settings</string>
+    <string name="cd_toggle_theme">Toggle Theme</string>
+</resources>

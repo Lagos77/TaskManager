@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">TaskManager</string>
+    <!-- Home Screen -->
+    <string name="home_create_task">Create task</string>
+    <string name="home_settings">Settings</string>
+    <string name="home_theme">Theme</string>
 </resources>
