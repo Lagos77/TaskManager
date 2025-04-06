@@ -8,10 +8,26 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.taskmanager.ui.Spacing
+
+private val Black = Color(0xFF000000)
+private val Tone10 = Color(0xFF331901)
+private val Tone20 = Color(0xFF663202)
+private val Tone30 = Color(0xFF994C03)
+private val Tone40 = Color(0xFFCC6504)
+private val Tone50 = Color(0xFFFF7E05)
+private val Tone60 = Color(0xFFFF9837)
+private val Tone70 = Color(0xFFFFB269)
+private val Tone80 = Color(0xFFFFCB9B)
+private val Tone90 = Color(0xFFFFE5CD)
+private val Tone95 = Color(0xFFFFF1E6)
+private val White = Color(0xFFFFFFFF)
+private val ErrorLight = Color(0xFFB00020)
+private val ErrorDark = Color(0xFFCF6679)
 
 private val darkColorScheme = darkColorScheme(
     background = Black,
@@ -23,7 +39,7 @@ private val darkColorScheme = darkColorScheme(
     surface = Tone90,
     onSurface = Tone10,
     error = ErrorDark,
-    onError = Color.Black,
+    onError = Black,
     tertiary = Tone50,
     onTertiary = Tone10,
     surfaceVariant = Tone30,
@@ -38,7 +54,7 @@ private val lightColorScheme = lightColorScheme(
     secondary = Tone30,
     onSecondary = White,
     surface = Tone10,
-    onSurface = Tone90,
+    onSurface = Tone95,
     error = ErrorLight,
     onError = White,
     tertiary = Tone50,
@@ -81,10 +97,10 @@ private val typography = androidx.compose.material3.Typography(
 )
 
 private val shape = Shapes(
-    extraSmall = RoundedCornerShape(Spacing.extraSmall),
-    small = RoundedCornerShape(Spacing.small),
-    medium = RoundedCornerShape(Spacing.medium),
-    large = RoundedCornerShape(Spacing.large),
+    extraSmall = RoundedCornerShape(Spacing.micro),
+    small = RoundedCornerShape(Spacing.verySmall),
+    medium = RoundedCornerShape(Spacing.mediumPlus),
+    large = RoundedCornerShape(Spacing.largePlus),
     extraLarge = RoundedCornerShape(Spacing.extraLarge),
 )
 
@@ -102,25 +118,6 @@ fun TaskManagerTheme(
         content = content
     )
 }
-
-val Typography.titleLarge: TextStyle
-    @Composable get() = typography.titleLarge
-
-val Typography.titleNormal: TextStyle
-    @Composable get() = typography.titleMedium
-
-val Typography.body: TextStyle
-    @Composable get() = typography.bodyMedium
-
-val Typography.labelLarge: TextStyle
-    @Composable get() = typography.labelLarge
-
-val Typography.labelMedium: TextStyle
-    @Composable get() = typography.labelMedium
-
-val Typography.labelSmall: TextStyle
-    @Composable get() = typography.labelSmall
-
 
 
 
