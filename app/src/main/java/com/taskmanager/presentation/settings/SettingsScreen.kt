@@ -16,7 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.ramcosta.composedestinations.annotation.Destination
-import com.taskmanager.presentation.components.TopBar
+import com.taskmanager.presentation.components.Toolbar
 import com.taskmanager.presentation.components.TopBarTitle
 
 @Destination
@@ -28,7 +28,7 @@ fun SettingsScreen() {
 @Composable
 private fun SettingsScreenContent() {
     Scaffold(
-        topBar = { TopBar(currentScreen = TopBarTitle.SETTINGS) }
+        topBar = { Toolbar(currentScreen = TopBarTitle.SETTINGS) }
     )
     { innerPadding ->
         Column(

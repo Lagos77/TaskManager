@@ -30,10 +30,10 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.taskmanager.R
-import com.taskmanager.presentation.components.TopBar
+import com.taskmanager.presentation.components.Toolbar
 import com.taskmanager.presentation.components.TopBarTitle
 import com.taskmanager.presentation.destinations.SettingsScreenDestination
-import com.taskmanager.presentation.destinations.TasksScreenDestination
+import com.taskmanager.presentation.destinations.TasksFlowDestination
 import com.taskmanager.ui.Spacing
 import com.taskmanager.ui.theme.ThemeDefaults
 
@@ -44,10 +44,10 @@ fun HomeScreen(
     navigator: DestinationsNavigator
 ) {
     HomeScreenContent(
-        navigateToCreateTaskScreen = { navigator.navigate(TasksScreenDestination(currentScreen = TopBarTitle.CREATE)) },
+        navigateToCreateTaskScreen = { navigator.navigate(TasksFlowDestination(currentScreen = TopBarTitle.CREATE)) },
         navigateToEditTaskScreen = {
             navigator.navigate(
-                TasksScreenDestination(
+                TasksFlowDestination(
                     currentScreen = TopBarTitle.EDIT,
                     taskId = it
                 )
@@ -65,7 +65,7 @@ private fun HomeScreenContent(
     navigateToSettingsScreen: () -> Unit,
 ) {
     Scaffold(
-        topBar = { TopBar(currentScreen = TopBarTitle.HOME) },
+        topBar = { Toolbar(currentScreen = TopBarTitle.HOME) },
         bottomBar = {
             NavigationBar(
                 containerColor = MaterialTheme.colorScheme.onSurface
