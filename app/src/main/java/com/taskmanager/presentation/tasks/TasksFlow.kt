@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.taskmanager.presentation.components.Toolbar
 import com.taskmanager.presentation.components.TopBarTitle
@@ -30,6 +31,7 @@ import com.taskmanager.ui.Spacing
 @Destination
 @Composable
 fun TasksFlow(
+    viewModel: TaskFlowViewModel = hiltViewModel(),
     currentScreen: TopBarTitle,
     taskId: Int = 0,
 ) {

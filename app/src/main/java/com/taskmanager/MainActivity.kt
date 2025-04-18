@@ -6,7 +6,9 @@ import androidx.activity.compose.setContent
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.taskmanager.presentation.NavGraphs
 import com.taskmanager.ui.theme.TaskManagerTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
