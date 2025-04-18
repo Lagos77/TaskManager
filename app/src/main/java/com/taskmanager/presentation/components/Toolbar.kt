@@ -21,7 +21,7 @@ import kotlinx.parcelize.Parcelize
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(
+fun Toolbar(
     modifier: Modifier = Modifier,
     currentScreen: TopBarTitle = TopBarTitle.HOME,
     totalTasks: Int = 0,
