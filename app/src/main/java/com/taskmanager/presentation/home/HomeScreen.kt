@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -41,7 +42,8 @@ import com.taskmanager.ui.theme.ThemeDefaults
 @Destination
 @Composable
 fun HomeScreen(
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
     HomeScreenContent(
         navigateToCreateTaskScreen = { navigator.navigate(TasksFlowDestination(currentScreen = TopBarTitle.CREATE)) },
