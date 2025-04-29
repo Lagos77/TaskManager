@@ -1,5 +1,6 @@
 package com.taskmanager.presentation.tasks
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,6 +26,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.taskmanager.domain.TaskInfo
 import com.taskmanager.presentation.components.Toolbar
 import com.taskmanager.presentation.components.TopBarTitle
 import com.taskmanager.ui.Spacing
@@ -31,22 +35,37 @@ import com.taskmanager.ui.Spacing
 @Destination
 @Composable
 fun TasksFlow(
+    destinationsNavigator: DestinationsNavigator,
     viewModel: TaskFlowViewModel = hiltViewModel(),
     currentScreen: TopBarTitle,
-    taskId: Int = 0,
+    taskId: Int? = null,
 ) {
-    TasksScreenContent(currentScreen = currentScreen, taskId = taskId)
+    val viewState = viewModel.viewState.collectAsState()
+
+    viewModel.getSelectedTask(taskId)
+
+    TasksScreenContent(
+        currentScreen = currentScreen,
+        taskId = taskId,
+        createTask = { viewModel.createTask(it) },
+        editTask = viewState.value.currentTask,
+        updateTask = { viewModel.updateSelectedTask(it) },
+        popBackStack = { destinationsNavigator.popBackStack() },
+    )
 }
 
 @Composable
 private fun TasksScreenContent(
     currentScreen: TopBarTitle,
-    taskId: Int,
+    taskId: Int? = null,
+    createTask: (String) -> Unit,
+    editTask: TaskInfo?,
+    updateTask: (TaskInfo) -> Unit,
+    popBackStack: () -> Unit
 ) {
     Scaffold(
         topBar = { Toolbar(currentScreen = currentScreen) },
         bottomBar = {
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -62,18 +81,38 @@ private fun TasksScreenContent(
             modifier = Modifier
                 .padding(innerPadding),
         ) {
-            if (taskId == 0) {
-                CreateScreen()
+            if (taskId == null) {
+                CreateScreen(
+                    createTask = createTask,
+                    popBackStack = popBackStack,
+                )
             } else {
-                EditScreen(taskId = taskId)
+                if (editTask != null) {
+                    EditScreen(
+                        currentTask = editTask,
+                        updateTask = updateTask,
+                        popBackStack = popBackStack,
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-private fun CreateScreen() {
+private fun CreateScreen(
+    createTask: (String) -> Unit,
+    popBackStack: () -> Unit,
+) {
     var taskText by remember { mutableStateOf("") }
+
+    BackHandler {
+        if (taskText.isNotBlank()) {
+            createTask(taskText)
+        }
+        popBackStack()
+    }
+
     Column(
         modifier = Modifier.padding(horizontal = Spacing.smallMedium),
         verticalArrangement = Arrangement.Top,
@@ -82,8 +121,7 @@ private fun CreateScreen() {
         TextField(
             value = taskText,
             onValueChange = { taskText = it },
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             colors = TextFieldDefaults.colors(
                 focusedTextColor = Color.Black
             ),
@@ -92,11 +130,25 @@ private fun CreateScreen() {
 }
 
 @Composable
-private fun EditScreen( //TODO Should add task name as title
-    taskId: Int
+private fun EditScreen(
+    currentTask: TaskInfo,
+    updateTask: (TaskInfo) -> Unit,
+    popBackStack: () -> Unit,
 ) {
     var isEditing by remember { mutableStateOf(false) }
-    var taskName by remember { mutableStateOf("This is EditScreen with task $taskId") }
+    var taskName by remember { mutableStateOf(currentTask.task) }
+
+    BackHandler {
+        if (isEditing) {
+            isEditing = false
+        } else if (taskName != currentTask.task) {
+            val updatedTask = currentTask.copy(task = taskName)
+            updateTask(updatedTask)
+            popBackStack()
+        } else {
+            popBackStack()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -114,7 +166,6 @@ private fun EditScreen( //TODO Should add task name as title
                     focusedTextColor = Color.Black
                 ),
             )
-
         } else {
             Text(text = taskName)
         }
@@ -125,11 +176,23 @@ private fun EditScreen( //TODO Should add task name as title
 @Preview(showBackground = true)
 @Composable
 private fun CreateTaskScreenPreview() {
-    TasksScreenContent(currentScreen = TopBarTitle.CREATE, taskId = 0)
+    TasksScreenContent(
+        currentScreen = TopBarTitle.CREATE, taskId = 0,
+        createTask = {},
+        popBackStack = {},
+        editTask = null,
+        updateTask = {},
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun EditTaskScreenPreview() {
-    TasksScreenContent(currentScreen = TopBarTitle.EDIT, taskId = 1)
+    TasksScreenContent(
+        currentScreen = TopBarTitle.EDIT, taskId = 1,
+        createTask = {},
+        popBackStack = {},
+        editTask = null,
+        updateTask = {},
+    )
 }
