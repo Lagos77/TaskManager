@@ -23,6 +23,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +32,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.taskmanager.R
+import com.taskmanager.domain.TaskInfo
 import com.taskmanager.presentation.components.Toolbar
 import com.taskmanager.presentation.components.TopBarTitle
 import com.taskmanager.presentation.destinations.SettingsScreenDestination
@@ -45,7 +47,10 @@ fun HomeScreen(
     navigator: DestinationsNavigator,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
+    val viewState = viewModel.viewState.collectAsState()
+
     HomeScreenContent(
+        tasks = viewState.value.taskList,
         navigateToCreateTaskScreen = { navigator.navigate(TasksFlowDestination(currentScreen = TopBarTitle.CREATE)) },
         navigateToEditTaskScreen = {
             navigator.navigate(
@@ -62,6 +67,7 @@ fun HomeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeScreenContent(
+    tasks: List<TaskInfo>,
     navigateToCreateTaskScreen: () -> Unit,
     navigateToEditTaskScreen: (Int) -> Unit,
     navigateToSettingsScreen: () -> Unit,
@@ -119,10 +125,11 @@ private fun HomeScreenContent(
             ),
             verticalArrangement = Arrangement.spacedBy(Spacing.regular),
         ) {
-            items(10) { index ->
+            items(tasks.size) { index ->
+                val task = tasks[index]
                 TaskCard(
-                    title = "Task $index", description = "This a description for $index",
-                    onClick = { navigateToEditTaskScreen(index) },
+                    title = task.id.toString(), description = task.task,
+                    onClick = { navigateToEditTaskScreen(task.id) },
                 )
             }
         }
@@ -162,6 +169,7 @@ private fun TaskCard(
 @Composable
 private fun HomeScreenPreview() {
     HomeScreenContent(
+        tasks = emptyList(),
         navigateToCreateTaskScreen = {},
         navigateToEditTaskScreen = {},
         navigateToSettingsScreen = {},

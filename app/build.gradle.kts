@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId = "com.taskmanager"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -57,6 +57,8 @@ dependencies {
     kapt(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
     ksp(libs.compose.destination.ksp)
+    implementation(libs.room.core)
+    ksp(libs.room.compiler.ksp)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
