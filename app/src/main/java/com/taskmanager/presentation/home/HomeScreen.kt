@@ -1,20 +1,14 @@
 package com.taskmanager.presentation.home
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -33,12 +27,12 @@ import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.taskmanager.R
 import com.taskmanager.domain.TaskInfo
+import com.taskmanager.presentation.components.TaskCard
 import com.taskmanager.presentation.components.Toolbar
 import com.taskmanager.presentation.components.TopBarTitle
 import com.taskmanager.presentation.destinations.SettingsScreenDestination
 import com.taskmanager.presentation.destinations.TasksFlowDestination
 import com.taskmanager.ui.Spacing
-import com.taskmanager.ui.theme.ThemeDefaults
 
 @RootNavGraph(start = true)
 @Destination
@@ -51,6 +45,7 @@ fun HomeScreen(
 
     HomeScreenContent(
         tasks = viewState.value.taskList,
+        onDeleteTask = { viewModel.deleteSelectedTask(it) },
         navigateToCreateTaskScreen = { navigator.navigate(TasksFlowDestination(currentScreen = TopBarTitle.CREATE)) },
         navigateToEditTaskScreen = {
             navigator.navigate(
@@ -68,6 +63,7 @@ fun HomeScreen(
 @Composable
 private fun HomeScreenContent(
     tasks: List<TaskInfo>,
+    onDeleteTask: (TaskInfo) -> Unit,
     navigateToCreateTaskScreen: () -> Unit,
     navigateToEditTaskScreen: (Int) -> Unit,
     navigateToSettingsScreen: () -> Unit,
@@ -125,51 +121,24 @@ private fun HomeScreenContent(
             ),
             verticalArrangement = Arrangement.spacedBy(Spacing.regular),
         ) {
-            items(tasks.size) { index ->
+            items(tasks.size, key = { it }) { index ->
                 val task = tasks[index]
                 TaskCard(
                     title = task.id.toString(), description = task.task,
                     onClick = { navigateToEditTaskScreen(task.id) },
+                    onDelete = { onDeleteTask(task) },
                 )
             }
         }
     }
 }
 
-@Composable
-private fun TaskCard(
-    title: String,
-    description: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable { onClick() },
-        elevation = CardDefaults.cardElevation(defaultElevation = Spacing.pico),
-        colors = ThemeDefaults.defaultCardColors(),
-    ) {
-        Column(modifier = Modifier.padding(Spacing.mediumPlus)) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleSmall
-            )
-            Spacer(modifier = Modifier.height(Spacing.micro))
-            Text(
-                text = description,
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
-    }
-}
-
-
 @Preview(showBackground = true)
 @Composable
 private fun HomeScreenPreview() {
     HomeScreenContent(
         tasks = emptyList(),
+        onDeleteTask = {},
         navigateToCreateTaskScreen = {},
         navigateToEditTaskScreen = {},
         navigateToSettingsScreen = {},
