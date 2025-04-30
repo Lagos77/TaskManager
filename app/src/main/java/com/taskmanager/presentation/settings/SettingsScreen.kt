@@ -6,15 +6,21 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.taskmanager.presentation.components.Toolbar
@@ -25,11 +31,17 @@ import com.taskmanager.presentation.components.TopBarTitle
 fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
-    SettingsScreenContent()
+    SettingsScreenContent(
+        onClearAllTasks = { viewModel.delete() }
+    )
 }
 
 @Composable
-private fun SettingsScreenContent() {
+private fun SettingsScreenContent(
+    onClearAllTasks: () -> Unit,
+) {
+    var showDialog by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = { Toolbar(currentScreen = TopBarTitle.SETTINGS) }
     )
@@ -66,7 +78,7 @@ private fun SettingsScreenContent() {
             )
             SettingActionItem(
                 title = "Clear completed tasks",
-                onClick = {}
+                onClick = { showDialog = true }
             )
 
             Text(
@@ -77,6 +89,32 @@ private fun SettingsScreenContent() {
                 title = "App version",
                 value = "1.0.0"
             )
+
+            if (showDialog) {
+                AlertDialog(
+                    onDismissRequest = { showDialog = false },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            onClearAllTasks()
+                            showDialog = false
+                        }) { Text("Yes") }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = {
+                            showDialog = false
+                        }) {
+                            Text("Cancel")
+                        }
+                    },
+                    title = {
+                        Text("Confirm Clear")
+                    },
+                    text = {
+                        Text("Are you sure you want to clear all completed tasks?")
+                    },
+                    properties = DialogProperties()
+                )
+            }
         }
     }
 }
@@ -131,5 +169,7 @@ private fun SettingInfoItem(
 @Preview(showBackground = true)
 @Composable
 private fun SettingsScreenPreview() {
-    SettingsScreenContent()
+    SettingsScreenContent(
+        onClearAllTasks = {}
+    )
 }
